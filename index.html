@@ -17,7 +17,15 @@
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        /* 強化分類標題的視覺，使其不與檔案清單混淆 */
+        .search-box {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            border: 2px solid #cfe2ff;
+        }
+        .search-box:focus {
+            border-color: #0c63e4;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
         .accordion-button {
             background-color: #e9ecef;
             font-size: 1.1rem;
@@ -38,7 +46,6 @@
         .file-list-group .list-group-item:hover {
             background-color: #f1f8ff;
         }
-        /* 確保按鈕區塊不換行 */
         .action-buttons {
             white-space: nowrap;
         }
@@ -57,6 +64,13 @@
     </header>
 
     <main class="container mb-5">
+        
+        <div class="row mb-4">
+            <div class="col-md-8 mx-auto">
+                <input type="search" id="searchInput" class="form-control form-control-lg search-box py-3" placeholder="🔍 快速搜尋表單名稱 (例如: 定期檢查, 明細表...)">
+            </div>
+        </div>
+
         <ul class="nav nav-tabs nav-fill mb-4" id="formTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active fs-5 fw-bold" id="equipment-tab" data-bs-toggle="tab" data-bs-target="#equipment-pane" type="button" role="tab" aria-controls="equipment-pane" aria-selected="true">
@@ -71,7 +85,6 @@
         </ul>
 
         <div class="tab-content" id="formTabsContent">
-            
             <div class="tab-pane fade show active" id="equipment-pane" role="tabpanel" aria-labelledby="equipment-tab" tabindex="0">
                 <div class="accordion" id="accordionEquipment"></div>
             </div>
@@ -79,47 +92,41 @@
             <div class="tab-pane fade" id="machine-pane" role="tabpanel" aria-labelledby="machine-tab" tabindex="0">
                 <div class="accordion" id="accordionMachine"></div>
             </div>
-
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // --- 資料設定區：未來有新增或刪除檔案，只需修改這裡的陣列 ---
+        // --- 資料設定區 ---
 
         const equipmentData = {
-            "新設備導入、改裝與初次啟用": [
+            "申請書": [
                 "危險性設備事前檢查申請書.doc",
+                "危險性設備定期檢查申請書.doc",
+                "P3-64-01B連續生產製程壓力容器併入高壓氣體特定設備安全管理申請書.docx",
+                "危險性機械及設備廢用申請書(中區職業安全衛生中心).doc",
+                "檢查退費申請書 _1130523.docx",
+                "線上申請檢查作業申請書.doc",
+                "收據補發申請書.doc",
+                "新費率補換發申請書.doc",
+                "危險性機械或設備檢查結果報告表補發申請書.doc",
+                "危險性機械及設備代檢機構網站線上會員申請表.docx"
+            ],
+            "檢附資料一覽表": [
                 "申請竣工檢查檢附資料一覽表.doc",
                 "申請熔接構造檢附資料一覽表.doc",
                 "既有設備申請檢查檢附資料一覽表.doc",
+                "危險性設備內部檢查延長期限或替代檢查審查檢附資料一覽表.doc",
+                "申請變更檢查檢附資料一覽表.doc",
+                "申請重新檢查檢附資料一覽表.doc"
+            ],
+            "明細表": [
                 "危險性設備熔接明細表103[1].02印版用.doc",
                 "危險性設備(鍋爐除外)明細表.doc",
-                "鍋爐明細表.doc",
-                "拓印紀錄_設備.docx"
+                "鍋爐明細表.doc"
             ],
-            "法定定期檢查與特定管理": [
-                "危險性設備定期檢查申請書.doc",
-                "P3-64-01B連續生產製程壓力容器併入高壓氣體特定設備安全管理申請書.docx",
-                "危險性設備內部檢查延長期限或替代檢查審查檢附資料一覽表.doc",
-                "定期測厚紀錄.doc",
-                "鍋爐定期檢查測厚記錄.doc",
-                "耐壓試驗報告表11101版.doc",
-                "安全閥性能測試結果報告表10911版.doc",
-                "安全破裂片自主檢查結果報告表 新增0922 2020.doc",
-                "透度計靈敏度查核表.doc"
-            ],
-            "廠區日常營運與自主檢查": [
-                "鍋爐每日檢點表.doc",
-                "鍋爐每月自動檢查紀錄表.doc",
-                "鍋爐既有檢查自主檢查表.doc",
-                "壓力容器每日檢點表.doc",
-                "壓力容器每月自動檢查紀錄表.doc",
-                "高容每日檢點表.doc",
-                "高容每月自動檢查紀錄表.doc",
-                "高特每日檢點表.doc",
-                "高特每月自動檢查紀錄表.doc",
+            "自行檢查紀錄表": [
                 "既有第一種壓力容器自行檢查紀錄.doc",
                 "既有高壓氣體容器自行檢查紀錄.doc",
                 "既有高壓氣體特定設備自行檢查紀錄.doc",
@@ -132,121 +139,132 @@
                 "高壓氣體特定設備竣工重新檢查自行檢查紀錄.doc",
                 "高壓氣體容器(LPG)構造重新變更檢查自行檢查紀錄.doc",
                 "高壓氣體容器(LPG)熔接檢查自行檢查紀錄.doc",
-                "高壓氣體容器_車載型無縫集合容器重新檢查自行檢查紀錄.doc"
+                "高壓氣體容器_車載型無縫集合容器重新檢查自行檢查紀錄.doc",
+                "鍋爐既有檢查自主檢查表.doc",
+                "安全破裂片自主檢查結果報告表 新增0922 2020.doc"
             ],
-            "設備異動、變更、停用與廢止": [
+            "自動檢查表": [
+                "鍋爐每日檢點表.doc",
+                "鍋爐每月自動檢查紀錄表.doc",
+                "壓力容器每日檢點表.doc",
+                "壓力容器每月自動檢查紀錄表.doc",
+                "高容每日檢點表.doc",
+                "高容每月自動檢查紀錄表.doc",
+                "高特每日檢點表.doc",
+                "高特每月自動檢查紀錄表.doc"
+            ],
+            "其他": [
+                "拓印紀錄_設備.docx",
+                "定期測厚紀錄.doc",
+                "鍋爐定期檢查測厚記錄.doc",
+                "耐壓試驗報告表11101版.doc",
+                "安全閥性能測試結果報告表10911版.doc",
+                "透度計靈敏度查核表.doc",
                 "危險性機械或設備異動報備書 .doc",
-                "危險性機械及設備廢用申請書(中區職業安全衛生中心).doc",
                 "重新檢查-停用聲明書.docx",
-                "申請變更檢查檢附資料一覽表.doc",
-                "申請重新檢查檢附資料一覽表.doc"
-            ],
-            "行政庶務與異常補辦": [
-                "危險性機械及設備代檢機構網站線上會員申請表.docx",
                 "危險性機械或設備申請檢查代辦委託書112.04版.docx",
-                "線上申請檢查作業申請書.doc",
                 "檢查日期變更回單.doc",
                 "變更檢查地址回單.doc",
-                "檢查退費申請書 _1130523.docx",
-                "收據補發申請書.doc",
-                "新費率補換發申請書.doc",
-                "危險性機械或設備檢查結果報告表補發申請書.doc",
                 "事業單位輔導單.doc",
                 "內容物質性質表.doc"
             ]
         };
 
         const machineData = {
-            "新機械導入、改裝與初次啟用": [
+            "申請書": [
                 "危險性機械檢查申請書.doc",
+                "危險性機械及設備廢用申請書(中區職業安全衛生中心).doc",
+                "變更備查申請書104.02.09.doc",
+                "檢查退費申請書 _1130523.docx",
+                "線上申請檢查作業申請書.doc",
+                "收據補發申請書.doc",
+                "新費率補換發申請書.doc",
+                "危險性機械或設備檢查結果報告表補發申請書.doc",
+                "危險性機械及設備代檢機構網站線上會員申請表.docx"
+            ],
+            "檢附資料一覽表": [
                 "營建用升降機申請竣工檢查檢附資料一覽表.doc",
                 "既有危險性機械申請檢查檢附資料一覽表(P3-61-04D).doc",
                 "既有營建用升降機申請檢查檢附資料一覽表(P3-61-46A).doc",
-                "吊籠明細表.doc",
-                "固定式起重機明細表.doc",
-                "移動式起重機明細表.doc",
-                "營建用升降機明細表(P3-61-50B).doc",
-                "拓印紀錄_機械.docx"
-            ],
-            "廠區日常營運與自主檢查": [
-                "吊籠每日作業前檢點表107.doc",
-                "吊籠每月定期檢查紀錄表.doc",
-                "吊籠自行檢查紀錄.doc",
-                "固定式起重機每日作業前檢點表107.doc",
-                "固定式起重機每月自動檢查紀錄表107.doc",
-                "固定式起重機每年自動檢查紀錄表107.doc",
-                "固定式起重機自行檢查紀錄.doc",
-                "移動式起重機每日作業前檢點表107.doc",
-                "移動式起重機每月自動檢查紀錄表107.doc",
-                "移動式起重機每年自動檢查紀錄表107.doc",
-                "移動式起重機自行檢查紀錄.doc",
-                "營建用升降機自行檢查紀錄.doc",
-                "營建用升降機自行檢查紀錄表104.01.27.doc",
-                "營建用升降機(EN12159)自行檢查紀錄表.doc",
-                "危險性機械修補作業結果記錄表(修)1040225.doc"
-            ],
-            "機械異動、變更、停用與廢止": [
-                "危險性機械或設備異動報備書 .doc",
-                "危險性機械及設備廢用申請書(中區職業安全衛生中心).doc",
-                "變更備查申請書104.02.09.doc",
                 "危險性機械申請變更檢查檢附資料一覽表(P3-61-02C).doc",
                 "危險性機械申請重新檢查檢附資料一覽表(P3-61-03C).doc"
             ],
-            "行政庶務與異常補辦 (共用表單)": [
-                "危險性機械及設備代檢機構網站線上會員申請表.docx",
+            "明細表": [
+                "吊籠明細表.doc",
+                "固定式起重機明細表.doc",
+                "移動式起重機明細表.doc",
+                "營建用升降機明細表(P3-61-50B).doc"
+            ],
+            "自行檢查紀錄表": [
+                "吊籠自行檢查紀錄.doc",
+                "固定式起重機自行檢查紀錄.doc",
+                "移動式起重機自行檢查紀錄.doc",
+                "營建用升降機自行檢查紀錄.doc",
+                "營建用升降機自行檢查紀錄表104.01.27.doc",
+                "營建用升降機(EN12159)自行檢查紀錄表.doc"
+            ],
+            "自動檢查表": [
+                "吊籠每日作業前檢點表107.doc",
+                "吊籠每月定期檢查紀錄表.doc",
+                "固定式起重機每日作業前檢點表107.doc",
+                "固定式起重機每月自動檢查紀錄表107.doc",
+                "固定式起重機每年自動檢查紀錄表107.doc",
+                "移動式起重機每日作業前檢點表107.doc",
+                "移動式起重機每月自動檢查紀錄表107.doc",
+                "移動式起重機每年自動檢查紀錄表107.doc"
+            ],
+            "其他": [
+                "拓印紀錄_機械.docx",
+                "危險性機械修補作業結果記錄表(修)1040225.doc",
+                "危險性機械或設備異動報備書 .doc",
                 "危險性機械或設備申請檢查代辦委託書112.04版.docx",
-                "線上申請檢查作業申請書.doc",
                 "檢查日期變更回單.doc",
-                "變更檢查地址回單.doc",
-                "檢查退費申請書 _1130523.docx",
-                "收據補發申請書.doc",
-                "新費率補換發申請書.doc",
-                "危險性機械或設備檢查結果報告表補發申請書.doc"
+                "變更檢查地址回單.doc"
             ]
         };
 
-        // --- 渲染畫面邏輯 ---
+        // --- 渲染畫面與搜尋邏輯 ---
 
         function renderAccordion(dataObj, containerId, folderName) {
             const container = document.getElementById(containerId);
             let htmlContent = "";
             let index = 0;
 
+            // 取得目前的網址路徑，以便產生 Microsoft 檢視器所需的絕對路徑
+            const baseUrl = window.location.href.split('?')[0].split('#')[0].replace(/\/[^\/]*$/, '');
+
             for (const [category, files] of Object.entries(dataObj)) {
-                // 為每個分類產生唯一的 ID
                 const headingId = `heading-${folderName}-${index}`;
                 const collapseId = `collapse-${folderName}-${index}`;
                 
-                // 產生清單項目
-                let listHtml = '<ul class="list-group list-group-flush file-list-group">';
+                let listHtml = `<ul class="list-group list-group-flush file-list-group" id="list-${folderName}-${index}">`;
                 files.forEach(fileName => {
-                    // 使用相對路徑指向 GitHub 上的實體檔案位置
-                    const filePath = `./${folderName}/${encodeURIComponent(fileName)}`;
+                    const relativeFilePath = `./${folderName}/${encodeURIComponent(fileName)}`;
+                    const absoluteFilePath = `${baseUrl}/${folderName}/${encodeURIComponent(fileName)}`;
+                    
+                    // 使用 Microsoft Office 線上檢視器
+                    const previewUrl = `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(absoluteFilePath)}`;
+
                     listHtml += `
-                        <li class="list-group-item py-3">
-                            <span class="text-dark">${fileName}</span>
+                        <li class="list-group-item py-3 file-item">
+                            <span class="text-dark file-name">${fileName}</span>
                             <div class="action-buttons">
-                                <a href="${filePath}" target="_blank" class="btn btn-outline-secondary btn-sm me-2">開啟</a>
-                                <a href="${filePath}" download="${fileName}" class="btn btn-primary btn-sm">下載</a>
+                                <a href="${previewUrl}" target="_blank" class="btn btn-outline-secondary btn-sm me-2" title="線上預覽文件">開啟</a>
+                                <a href="${relativeFilePath}" download="${fileName}" class="btn btn-primary btn-sm">下載</a>
                             </div>
                         </li>
                     `;
                 });
                 listHtml += '</ul>';
 
-                // 全部預設收合
-                const buttonClass = "accordion-button collapsed";
-                const collapseClass = "accordion-collapse collapse";
-                const isExpanded = "false";
-
                 htmlContent += `
-                    <div class="accordion-item">
+                    <div class="accordion-item category-item">
                         <h2 class="accordion-header" id="${headingId}">
-                            <button class="${buttonClass}" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="${isExpanded}" aria-controls="${collapseId}">
-                                ${category} <span class="badge bg-secondary ms-2">${files.length}</span>
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}">
+                                ${category} <span class="badge bg-secondary ms-2 file-count">${files.length}</span>
                             </button>
                         </h2>
-                        <div id="${collapseId}" class="${collapseClass}" aria-labelledby="${headingId}" data-bs-parent="#${containerId}">
+                        <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}">
                             <div class="accordion-body p-0">
                                 ${listHtml}
                             </div>
@@ -261,6 +279,47 @@
         // 初始化渲染
         renderAccordion(equipmentData, "accordionEquipment", "equipment");
         renderAccordion(machineData, "accordionMachine", "machine");
+
+        // 搜尋列過濾邏輯
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const keyword = e.target.value.trim().toLowerCase();
+            const allCategories = document.querySelectorAll('.category-item');
+
+            allCategories.forEach(category => {
+                let visibleCount = 0;
+                const fileItems = category.querySelectorAll('.file-item');
+                
+                fileItems.forEach(item => {
+                    const fileName = item.querySelector('.file-name').textContent.toLowerCase();
+                    if (fileName.includes(keyword)) {
+                        item.style.setProperty('display', 'flex', 'important');
+                        visibleCount++;
+                    } else {
+                        item.style.setProperty('display', 'none', 'important');
+                    }
+                });
+
+                // 更新標籤數量
+                category.querySelector('.file-count').textContent = visibleCount;
+
+                const collapseDiv = category.querySelector('.accordion-collapse');
+                const bsCollapse = bootstrap.Collapse.getInstance(collapseDiv) || new bootstrap.Collapse(collapseDiv, {toggle: false});
+
+                if (visibleCount > 0) {
+                    category.style.display = 'block';
+                    // 如果有輸入關鍵字，就自動展開包含結果的分類
+                    if (keyword !== "") {
+                        bsCollapse.show();
+                    } else {
+                        bsCollapse.hide(); // 清空搜尋時收合所有分類
+                    }
+                } else {
+                    // 若該分類下無符合檔案，隱藏整個分類
+                    category.style.display = 'none';
+                    bsCollapse.hide();
+                }
+            });
+        });
 
     </script>
 </body>
