@@ -247,7 +247,7 @@ const machineData = {
 
         // --- 3. 渲染畫面與 PDF/Word 判斷邏輯 (已改用 Google 檢視器) ---
 
-        function renderAccordion(dataObj, containerId, folderName) {
+function renderAccordion(dataObj, containerId, folderName) {
             const container = document.getElementById(containerId);
             let htmlContent = "";
             let index = 0;
@@ -260,21 +260,27 @@ const machineData = {
                 
                 let listHtml = `<ul class="list-group list-group-flush file-list-group" id="list-${folderName}-${index}">`;
                 files.forEach(fileName => {
-                    const relativeFilePath = `./${folderName}/${encodeURIComponent(fileName)}`;
-                    const absoluteFilePath = `${baseUrl}/${folderName}/${encodeURIComponent(fileName)}`;
+                    
+                    // --- 重點修改：判斷如果是「計算」分類，強制將資料夾指向 cla ---
+                    let actualFolder = folderName;
+                    if (category === "計算") {
+                        actualFolder = "cla";
+                    }
+
+                    const relativeFilePath = `./${actualFolder}/${encodeURIComponent(fileName)}`;
+                    const absoluteFilePath = `${baseUrl}/${actualFolder}/${encodeURIComponent(fileName)}`;
                     
                     let previewUrl = "";
                     const lowerName = fileName.toLowerCase();
                     
-                    // 判斷檔案類型決定預覽方式
+                    // 判斷檔案類型決定預覽方式 (加入 .xls 和 .xlsx 的支援)
                     if (lowerName.endsWith('.pdf')) {
-                        // PDF 檔：直接使用瀏覽器原生開啟
                         previewUrl = relativeFilePath;
-                    } else if (lowerName.endsWith('.doc') || lowerName.endsWith('.docx')) {
-                        // Word 檔：改用 Google Docs 線上檢視器 (移除 embedded 參數以獲得最佳滿版體驗)
+                    } else if (lowerName.endsWith('.doc') || lowerName.endsWith('.docx') || lowerName.endsWith('.xls') || lowerName.endsWith('.xlsx')) {
+                        // Word 和 Excel 檔：使用 Google Docs 線上檢視器
                         previewUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(absoluteFilePath)}`;
                     } else {
-                        previewUrl = relativeFilePath; // 預設處理
+                        previewUrl = relativeFilePath; 
                     }
 
                     listHtml += `
